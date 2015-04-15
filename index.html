@@ -1,0 +1,279 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <![endif]-->
+     <!-- Favicon Icon -->
+    <link rel="icon" href="assets/img/favicon.ico" />
+    <title>Stock Humor ^.^</title>
+    <!-- BOOTSTRAP CORE CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- ION ICONS STYLES -->
+    <link href="assets/css/ionicons.css" rel="stylesheet" />
+     <!-- FONT AWESOME ICONS STYLES -->
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- CUSTOM CSS -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+     <!-- IE10 viewport hack  -->
+    <script src="assets/js/ie-10-view-port.js"></script>
+    
+</head>
+<body>
+    <!--HOME SECTION START  -->
+    <div id="home">
+        <div class="overlay">
+            <div class="container">
+                <div class="row scroll-me" >
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 ">
+                          <h1 ><font color="lightblue">Stock Humor ;)</font></h1>
+                    <h4>
+                        Please input your latest stock information to get a fun
+						tweet in response!
+
+                    </h4>
+
+
+						<form>
+							<div class="form-group"> <label for="name"><font color="lightblue">Name of Stock:</font></label>
+								<input type="text" class="form-control" id="name" placeholder="Name of Stock">
+							  </div>
+							 
+							  <div class="form-group">
+								<label for="date"><font color="lightblue">Date of Purchase in the PAST YEAR:</font></label>
+								<input type="date" class="form-control" id="dop">
+							 
+							  <div class="form-group"> <label for="number"><font color="lightblue">Number of Stocks Purchased in the PAST YEAR:</font></label>
+								<input type="number" class="form-control" id="stocks" placeholder="# of Stocks">
+							  </div>
+						 
+							  <button type="button" class="btn btn-success" onClick="getData();">Give me Tweet</button>
+							  <script> function getData() {
+    var url = "http://query.yahooapis.com/v1/public/yql";
+    var symbol = $("#name").val();
+    var startDate = $("#dop").val();
+	var numStocks = $("#stocks").val();
+    var endDate;
+    var str = 'select * from yahoo.finance.historicaldata where symbol in ("' + symbol + '") and startDate = "' + startDate + '" and endDate = "' + endDate + '"';
+    var data = encodeURIComponent(str);
+	var old = 0;
+	var curr = 0;
+	var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+	var difference = 0;
+	var posNeg;
+	var posNeg2;
+	var item = "Golden iWatch"
+	var items = ["Bugatti Veyron", "Apple Phone Gold", "McChicken", "Paperclip","Boeing 747", "Fedora", "Hummer H1", "Jetski",
+	"Garbage Truck", "Stop Sign", "Tiger Cub", "Barel of Jet Fuel", "Rubber Chicken", "Toyota Prius", "Can(s) of Tennis Balls", "Macbook Air",
+	"Macbook Pro", "Beats Headphones", "Luxury Yacht","Ring(s) made of dinosaur bones", "Chipotle Burrito", "Banana", "Gold Bar", "Gumball"];
+	var prices = [2250, 649, 1, 0.01, 357000000, 5, 40500, 7000, 230000, 50, 13400, 90, 5, 25000, 3, 1000, 2000, 200, 5000000, 4000, 
+	7, 0.2, 50000, 0.035];
+	
+    if(dd<10) {
+        dd='0'+dd
+    } 
+    if(mm<10) {
+        mm='0'+mm
+    } 
+    endDate = yyyy+'-'+mm+'-'+dd;
+
+    $.getJSON(url, 'q=' + data + "&format=json&diagnostics=true&env=http://datatables.org/alltables.env")
+        .done(function (data) {
+		old = parseFloat(data.query.results.quote[data.query.results.quote.length-1].Open);
+        //$("#d1").text("Old Price: " + old);
+    var data = encodeURIComponent("select * from yahoo.finance.quotes where symbol in ('" + symbol + "')");
+
+    $.getJSON(url, 'q=' + data + "&format=json&diagnostics=true&env=http://datatables.org/alltables.env")
+        .done(function (data) {
+		curr = parseFloat(data.query.results.quote.LastTradePriceOnly);
+            //$('#d2').text("Current Price: " + curr);
+				//if the difference is negative, put it depressing message and change difference to positive for further use. If positive, put it positive message. 
+				difference = curr - old;
+				difference = difference * numStocks;
+				var random = Math.floor((Math.random() * items.length));
+				item = items[random];
+				var price = prices[random];
+				var numBuy = difference/price;
+				numBuy = numBuy.toFixed(5);
+				
+				if(difference < 0) {
+					posNeg = "Because of my silly investments in "+ symbol+ " on "+ startDate +", I could have bought";
+					posNeg2 = "but I dun goofed";
+					numBuy = numBuy * -1.0;
+				}
+				else{
+					posNeg = "Because of my smart investments in "+ symbol + " on "+ startDate +", I can buy";
+					posNeg2 = ". Wow!";
+				}
+				
+				var stringStuffAfter = posNeg+" "+ numBuy+" " +item+"(s) "+posNeg2;
+				window.open("https://twitter.com/intent/tweet?button_hashtag=stockhumor&text="+stringStuffAfter);
+				//document.getElementById("link").innerHTML = "<a href=\"https://twitter.com/intent/tweet?button_hashtag=bitcamp&text="+posNeg+" "+ numBuy +item+" "+posNeg2+"\"class=\"twitter-hashtag-button\">Tweet #Bitcamp</a>";
+        })
+        .fail(function (jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.log('Request failed: ' + err);
+        });
+	})
+        .fail(function (jqxhr, textStatus, error) {
+        var err = textStatus + ", " + error;  
+            $("#d1").text('Request filled: ' + err);
+    });
+     
+		
+}
+</script>
+							  
+						</form>
+						<div id="link">
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div> 
+							<a class="twitter-timeline" href="https://twitter.com/search?q=%23stockhumor%20" data-widget-id="587001669273182208">Tweets about #stockhumor </a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+					<!--	<a class="twitter-timeline" href="https://twitter.com/hashtag/stock_humor" data-widget-id="586894716127547392">#stockhumor Tweets</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script> -->
+
+						<div id="d1">
+						</div>
+						<div id="d2">
+						</div>
+						<div id="d3">
+						</div>
+						<div id="d4">
+						</div>
+						<div id="d5">
+						</div>
+                    <head>
+						  <title>Bootstrap Example</title>
+						  <meta charset="utf-8">
+						  <meta name="viewport" content="width=device-width, initial-scale=1">
+						  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+						  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+						  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+						</head>
+                </div>
+                </div>
+              
+                
+            </div>
+        </div>
+
+    </div>
+    <!--HOME SECTION END  -->
+     <!-- ABOUT SECTION START-->
+     <!-- CLIENTS SECTION START-->
+    <section id="clients">
+        <div class="overlay">       
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  client-cover" >
+                     <div id="carousel-example" class="carousel slide" data-ride="carousel">
+
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <div class="testimonial-section">
+                           I made 3 million dollars off a Nigerian prince! 
+                        </div>
+                        <div class="testimonial-section-name">
+                            <img src="assets/img/client1.jpg" alt="" class="img-circle" />
+                            -  Genghis Khan
+                        </div>
+                            
+                        </div>
+                        <div class="item">
+                           <div class="testimonial-section">
+                             Gooby pls.
+                        </div>
+                        <div class="testimonial-section-name">
+                            <img src="assets/img/client2.jpg" alt="" class="img-circle" />
+                            -  Dolan
+                        </div>
+                            
+                        </div>
+                        <div class="item">
+                          <div class="testimonial-section">
+                             This is not what I signed up for
+                        </div>
+                        <div class="testimonial-section-name">
+                            <img src="assets/img/client3.jpg" alt="" class="img-circle" />
+                            -  Dev Team
+                        </div>
+                            
+                        </div>
+                         <!--INDICATORS-->
+                    <ol class="carousel-indicators carousel-indicators-set">
+                        <li data-target="#carousel-example" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-example" data-slide-to="1"></li>
+                        <li data-target="#carousel-example" data-slide-to="2"></li>
+                    </ol>
+
+                    </div>
+                   
+                </div>
+                </div>
+            </div>
+           
+        </div>
+             </div>
+    </section>
+     <!-- CLIENTS SECTION END-->
+       
+
+     <!-- CONTACT SECTION START-->
+    <section id="contact">
+        <div class="overlay">       
+        <div class="container">
+            <div class="row text-center">
+                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  contact-cover" >
+                     <h2>Connect With Us!</h2>
+                     <div class="space"> </div>
+                      <div class="social">
+                        <a href="http://bit.ly/1e1EYJv" target="_blank"><i class="fa fa-facebook "></i></a>
+                        <a href="https://twitter.com/stock_humor" target="_blank"><i class="fa fa-twitter"></i></a>
+
+                    </div>
+                </div>
+               
+               
+            </div>
+           
+        </div>
+             </div>
+    </section>
+     <!-- CONATCT SECTION END-->
+    <!-- FOOTER SECTION START-->
+    <footer>
+        <div class="container">
+<div class="row text-center">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+                             &copy; 2015 Bitcamp Project using<a href="http://www.designbootstrap.com/" target="_blank"> DesignBootstrap </a> 
+                         </div>
+
+    </div>
+            </div>
+    </footer>
+    <!-- FOOTER SECTION END-->
+
+    <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+    <!-- CORE JQUERY  SCRIPTS -->
+    <script src="assets/js/jquery-1.11.1.js"></script>
+    <!-- BOOTSTRAP SCRIPTS  -->
+    <script src="assets/js/bootstrap.js"></script>
+    <!-- SCROLLING SCRIPTS PLUGIN  -->
+    <script src="assets/js/jquery.easing.min.js"></script>
+    <!-- CUSTOM SCRIPTS   -->
+    <script src="assets/js/custom.js"></script>
+</body>
+</html>
