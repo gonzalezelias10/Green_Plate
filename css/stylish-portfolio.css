@@ -155,7 +155,7 @@ hr.small {
     position: relative;
     width: 100%;
     height: 100%;
-    background: url(../img/bg.jpg) no-repeat center center scroll;
+    background: url(../img/test.jpg) no-repeat center center scroll;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -171,14 +171,24 @@ hr.small {
 /* Services */
 
 .services {
-    padding: 50px 0;
+    padding: 10px 0;
     
 }
 
 .service-item {
     margin-bottom: 30px;
 }
+#parent {
 
+    width: 1200px;
+}
+
+.image {
+
+    float: left;
+    width: 600px;
+    height: 600px;
+}
 /* Callout */
 
 .callout {
@@ -197,6 +207,7 @@ hr.small {
 
 .portfolio {
     padding: 50px 0;
+
 }
 
 .portfolio-item {
@@ -237,4 +248,5 @@ hr.small {
 
 footer {
     padding: 100px 0;
+    background: url(../img/bg2.jpg) no-repeat center center scroll;
 }
